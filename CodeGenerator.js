@@ -224,6 +224,18 @@ class CodeGenerator {
   }
 
   /*
+    @param Object data {
+      {array<string>} args
+    }
+  */
+  static consoleLog(args) {
+    var code = `console.log(${ args && args.join(", ") });`;
+    return {
+      code: code
+    }
+  }
+
+  /*
     @param {string} code
 
     @description: 
