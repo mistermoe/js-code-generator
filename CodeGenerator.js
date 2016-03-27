@@ -1,5 +1,10 @@
 'use strict';
 
+
+// TODO: add function to generate code for else if
+// TODO: add function to generate code for else
+// TODO: add function to generate code for while
+// TODO: add function to generate code for switch
 // TODO: make every function return an object with data or code (or both)
 // TODO: add @returns to all function comments
 
@@ -8,8 +13,12 @@ class CodeGenerator {
   /*
     @param Object data {
       {string} name,
-      {array} args,
+      {array} args (Optional),
       {function} body
+    }
+    @returns {
+      data: data,
+      code: code
     }
   */
   static firstClassFunction(data) {
@@ -17,14 +26,14 @@ class CodeGenerator {
       `var ${data.name} = function(${ data.args && data.args.join(",") || "" }) {` + "\n" +
         `${data.body()}` + "\n" +
       `};`
-    
+
     return {
       data: data,
       code: CodeGenerator.indent(code)
     }
   }
 
-  /* 
+  /*
     @param Object data {
       {string} type
     }
@@ -40,12 +49,12 @@ class CodeGenerator {
       code: code
     }
   }
-  
+
   /*
     @param Object data {
-      {string} objName
+      {string} objName (Optional. Defaults to "this")
       {string} funcName,
-      {array} args,
+      {array} args (Optional),
       {function} body
     }
   */
@@ -60,7 +69,7 @@ class CodeGenerator {
       code: CodeGenerator.indent(code)
     }
   }
-  
+
   /*
     @param Object data {
       {string} condition,
@@ -88,11 +97,10 @@ class CodeGenerator {
     }
   */
   static forLoop(data) {
-    var code = 
+    var code =
       `for (${data.startCondition}; ${data.stopCondition}; ${data.incrementAction}) {` + "\n" +
         `${data.body()}` + "\n" +
       `}`
-    
 
     return {
       data: data,
@@ -100,7 +108,7 @@ class CodeGenerator {
     }
   }
 
-  /* 
+  /*
     @param Object data {
       {function} body,
     }
@@ -117,14 +125,14 @@ class CodeGenerator {
 
   }
 
-  /* 
+  /*
     @param Object data {
       {string} arg
       {function} body,
     }
   */
   static catchBlock(data) {
-    var code = 
+    var code =
       `catch(${ data.arg || "" }) {`  + "\n" +
         `${data.body(data.arg)}`  + "\n" +
       `}`;
@@ -141,11 +149,11 @@ class CodeGenerator {
     }
   */
   static objectFunctionCall(data) {
-    return (
-      CodeGenerator.clean(
-        `${data.objName || "this"}.${data.funcName}(${ data.args && data.args.join(", ") || "" });`
-      )
-    );
+    var code = `${data.objName || "this"}.${data.funcName}(${ data.args && data.args.join(", ") || "" });`;
+    return {
+      data: data,
+      code: CodeGenerator.clean(code)
+    }
   }
 
   /*
@@ -187,7 +195,7 @@ class CodeGenerator {
   /*
     @param Object data {
       {string} name,
-      {string} value
+      {string} value (optional)
     }
   */
   static variable(data) {
@@ -216,6 +224,44 @@ class CodeGenerator {
 
   /*
     @param Object data {
+      {string} name,
+      {string} value (Optional)
+    }
+  */
+  static incrementVariable(data) {
+    var code;
+    if (data.value)
+      code = `${data.name} += ${data.value};`;
+    else
+      code = `${data.name}++`;
+
+    return {
+      data: data,
+      code: CodeGenerator.clean(code)
+    }
+  }
+
+  /*
+    @param Object data {
+      {string} name,
+      {string} value (Optional)
+    }
+  */
+  static decrementVariable(data) {
+    var code;
+    if (data.value)
+      code = `${data.name} -= ${data.value};`;
+    else
+      code = `${data.name}--`;
+
+    return {
+      data: data,
+      code: CodeGenerator.clean(code)
+    }
+  }
+
+  /*
+    @param Object data {
       {string} value
     }
   */
@@ -224,9 +270,7 @@ class CodeGenerator {
   }
 
   /*
-    @param Object data {
-      {array<string>} args
-    }
+    @param { array<string> } args
   */
   static consoleLog(args) {
     var code = `console.log(${ args && args.join(", ") });`;
@@ -236,10 +280,34 @@ class CodeGenerator {
   }
 
   /*
+    @param Object data {
+      {string} text,
+      {boolean} block (Optional. Defaults to false.)
+    }
+  */
+  static comment(data) {
+    var code;
+
+    if (data.hasOwnProperty("block") && data.block == true) {
+      code =
+        `/*` + "\n" +
+        `${data.text}` + "\n" +
+        `*/`;
+      code = CodeGenerator.indent(code);
+    }
+    else {
+      code = `// ${data.text}`
+    }
+    return {
+      code: code
+    }
+  }
+
+  /*
     @param {string} code
 
-    @description: 
-      Takes a rendered code and indents lines 2 through (n - 2), 
+    @description:
+      Takes a rendered code and indents lines 2 through (n - 2),
       where n is the number of lines
 
     @returns: {string}
@@ -270,13 +338,13 @@ class CodeGenerator {
     for (var i = 0; i < CodeGenerator.numSpacesPerTab * numTabs; i += 1) {
       tabs += " ";
     }
-    
+
     return tabs;
   }
 
   /*
     @param: {string} line
-    @description: Cleans a line of code. 
+    @description: Cleans a line of code.
     @returns: {string}
   */
   static clean(line) {
