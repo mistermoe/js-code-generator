@@ -1,8 +1,5 @@
 'use strict';
 
-
-// TODO: add function to generate code for else if
-// TODO: add function to generate code for else
 // TODO: add function to generate code for while
 // TODO: add function to generate code for switch
 // TODO: make every function return an object with data or code (or both)
@@ -84,6 +81,39 @@ class CodeGenerator {
 
     return {
       data: data,
+      code: CodeGenerator.indent(code)
+    }
+  }
+
+  /*
+    @param Object data {
+      {string} condition,
+      {function} body
+    }
+  */
+  static elseIfStatement(data) {
+    var code =
+      `else if (${data.condition}) {` + "\n" +
+        `${data.body()}` + "\n" +
+      `}`;
+
+    return {
+      code: CodeGenerator.indent(code)
+    }
+  }
+
+  /*
+    @param Object data {
+      {function} body
+    }
+  */
+  static elseStatement(data) {
+    var code =
+      `else {` + "\n" +
+        `${data.body()}` + "\n" +
+      `}`;
+
+    return {
       code: CodeGenerator.indent(code)
     }
   }
