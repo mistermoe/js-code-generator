@@ -165,6 +165,59 @@ num--
 */
 ```
 
+**firstClassFunction**
+```javascript
+/*
+  @param Object data {
+    {string} name,
+    {array} args (Optional),
+    {function} body
+  }
+  @returns {
+    data: data,
+    code: code
+  } 
+*/
+
+var example = Generate.firstClassFunction({
+  name: "func",
+  args: ["a", "b", "c"],
+  body: function() {
+    return Generate.consoleLog("hi").code;
+  }
+})
+
+console.log(example.code)
+
+/* Output:
+var func = function(a, b, c) {
+  console.log("hi");
+};
+*/
+```
+
+**newInstance**
+```javascript
+  /*
+    @param Object data {
+      {string} type
+      {array} args
+    }
+
+    @returns Object {
+      {string} code
+    }
+  */
+
+  var instance = Generate.newInstance({type: "Person", args: ["'Bob'", 30]});
+  var personVar = Generate.variable({name: "person", value: instance.code});
+  console.log(personVar.code);
+
+  /* Output:
+    var person = new Person('Bob', 30);
+  */
+
+```
 
 **objectPropertyAssignment**
 ```javascript
@@ -182,7 +235,6 @@ var objVar = Generate.variable({
   name: "obj",
   value: {}
 });
-code.push(objVar.code);
 
 var example1 = Generate.objectPropertyAssignment({
   objName: objVar.data.name, 
@@ -264,39 +316,6 @@ obj.sumNums = function(nums) {
 */
 ```
 
-
-**firstClassFunction**
-```javascript
-/*
-  @param Object data {
-    {string} name,
-    {array} args (Optional),
-    {function} body
-  }
-  @returns {
-    data: data,
-    code: code
-  } 
-*/
-
-var example = Generate.firstClassFunction({
-  name: "func",
-  args: ["a", "b", "c"],
-  body: function() {
-    return Generate.consoleLog("hi").code;
-  }
-})
-
-console.log(example.code)
-
-/* Output:
-var func = function(a, b, c) {
-  console.log("hi");
-};
-*/
-```
-
-
 **ifStatement**
 ```javascript
 /*
@@ -335,6 +354,18 @@ if (num > 2) {
 }
 */
 ```
+
+**elseIfStatement**
+
+**elseStatement**
+
+**tryBlock**
+
+**catchBlock**
+
+
+
+
 
 **forLoop**
 ```javascript

@@ -1,11 +1,77 @@
 'use strict';
 
-// TODO: add function to generate code for while
-// TODO: add function to generate code for switch
-// TODO: make every function return an object with data or code (or both)
-// TODO: add @returns to all function comments
-
 class CodeGenerator {
+
+  /*
+    @param Object data {
+      {string} name,
+      {string} value (optional)
+    }
+  */
+  static variable(data) {
+    var code = `var ${data.name}` + (data.value ? ` = ${data.value};` : ";");
+
+    return {
+      data: data,
+      code: CodeGenerator.clean(code)
+    }
+  }
+
+  /*
+    @param Object data {
+      {string} name,
+      {string} value
+    }
+  */
+  static reassignVariable(data) {
+    var code = `${data.name} = ${data.value};`;
+
+    return {
+      data: data,
+      code: CodeGenerator.clean(code)
+    }
+  }
+
+  /*
+    @param Object data {
+      {string} name,
+      {string} value (Optional)
+    }
+  */
+  static incrementVariable(data) {
+    var code;
+    if (data.value)
+      code = `${data.name} += ${data.value};`;
+    else
+      code = `${data.name}++`;
+
+    return {
+      data: data,
+      code: CodeGenerator.clean(code)
+    }
+  }
+
+  /*
+    @param Object data {
+      {string} name,
+      {string} value (Optional)
+    }
+  */
+  static decrementVariable(data) {
+    var code;
+    if (data.value)
+      code = `${data.name} -= ${data.value};`;
+    else
+      code = `${data.name}--`;
+
+    return {
+      data: data,
+      code: CodeGenerator.clean(code)
+    }
+  }
+
+
+
 
   /*
     @param Object data {
@@ -33,17 +99,19 @@ class CodeGenerator {
   /*
     @param Object data {
       {string} type
+      {array} args
     }
 
     @returns Object {
       {string} code
     }
   */
-  static newObjectInstance(data) {
-    var code = `new ${data.type}();`;
+  static newInstance(data) {
+    var code = `new ${data.type}(${data.args && data.args.join(", ")});`;
 
     return {
-      code: code
+      code: code,
+      data: data
     }
   }
 
@@ -221,82 +289,17 @@ class CodeGenerator {
     }
   }
 
-
-  /*
-    @param Object data {
-      {string} name,
-      {string} value (optional)
-    }
-  */
-  static variable(data) {
-    var code = `var ${data.name}` + (data.value ? ` = ${data.value};` : ";");
-
-    return {
-      data: data,
-      code: CodeGenerator.clean(code)
-    }
-  }
-
-  /*
-    @param Object data {
-      {string} name,
-      {string} value
-    }
-  */
-  static reassignVariable(data) {
-    var code = `${data.name} = ${data.value};`;
-
-    return {
-      data: data,
-      code: CodeGenerator.clean(code)
-    }
-  }
-
-  /*
-    @param Object data {
-      {string} name,
-      {string} value (Optional)
-    }
-  */
-  static incrementVariable(data) {
-    var code;
-    if (data.value)
-      code = `${data.name} += ${data.value};`;
-    else
-      code = `${data.name}++`;
-
-    return {
-      data: data,
-      code: CodeGenerator.clean(code)
-    }
-  }
-
-  /*
-    @param Object data {
-      {string} name,
-      {string} value (Optional)
-    }
-  */
-  static decrementVariable(data) {
-    var code;
-    if (data.value)
-      code = `${data.name} -= ${data.value};`;
-    else
-      code = `${data.name}--`;
-
-    return {
-      data: data,
-      code: CodeGenerator.clean(code)
-    }
-  }
-
   /*
     @param Object data {
       {string} value
     }
   */
   static returnStatement(data) {
-    return `return ${data && data.value};`
+    var code = `return ${data && data.value};`;
+    return {
+      code: code,
+      data: data
+    }
   }
 
   /*
