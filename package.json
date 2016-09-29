@@ -1,7 +1,7 @@
 {
-  "name": "code-generator",
+  "name": "js-code-generator",
   "version": "1.0.0",
-  "description": "Programmatically generates javascript",
+  "description": "Programmatically generate javascript",
   "main": "CodeGenerator.js",
   "repository": {
     "type": "git",

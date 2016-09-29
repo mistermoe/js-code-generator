@@ -1,6 +1,11 @@
 # CodeGenerator
 
-A library to help you programmatically generate javascript.
+Programmatically generate javascript.
+
+## Usage
+```
+npm install js-code-generator
+```
 
 
 ## Features
